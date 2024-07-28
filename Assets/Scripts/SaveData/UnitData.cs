@@ -8,12 +8,16 @@ namespace Assets.Scripts
     {
         [JsonProperty]
         public string Type { get;private set; }
+
         [JsonProperty]
         public int HitPoints { get; private set; }
+
         [JsonProperty]
         public Vector3 Position { get; private set; }
+
         [JsonProperty]
         public Vector3 Rotation { get; private set; }
+
         [JsonProperty]
         public int HashId { get; private set; }
 

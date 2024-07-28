@@ -8,8 +8,10 @@ namespace Assets.Scripts
     {
         [JsonProperty]
         public string Id { get; private set; }
+
         [JsonProperty]
         public int Amount { get; private set; }
+
         public ResourceData(Resource resource)
         {
             Id = resource.ID;
