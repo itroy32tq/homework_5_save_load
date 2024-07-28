@@ -2,22 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Assets.Code
+namespace Assets.Scripts
 {
-    public sealed class ResourcesSaveLoader : SaveLoader<ResourceService, List<Resource>>
+    public sealed class ResourcesSaveLoader : SaveLoader<ResourceService, List<ResourceData>>
     {
         public ResourcesSaveLoader(ResourceService service, IGameRepository gameRepository) : base(service, gameRepository)
         {
         }
 
-        protected override List<Resource> ConvertToData(ResourceService service)
+        protected override List<ResourceData> ConvertToData(ResourceService service)
         {
-            return service.GetResources().ToList();
+            return service.GetResources().Select(x => new ResourceData(x)).ToList();
         }
 
-        protected override void SetupData(ResourceService service, List<Resource> data)
+        protected override void SetupData(ResourceService service, List<ResourceData> data)
         {
-            service.SetResources(data);
+            var result = data.Join(service.GetResources(),
+                x => x.Id,
+                y => y.ID,
+                (x, y) =>
+                {
+                    y.Amount = x.Amount;
+                    return y;
+                }).ToList();
         }
     }
 }

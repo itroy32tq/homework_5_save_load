@@ -1,4 +1,4 @@
-﻿namespace Assets.Code
+﻿namespace Assets.Scripts
 {
     public abstract class SaveLoader<TService, TData> : ISaveLoader
     {
