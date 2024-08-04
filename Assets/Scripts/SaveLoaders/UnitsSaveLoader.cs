@@ -1,13 +1,17 @@
 ﻿using GameEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Assets.Scripts
 {
     public sealed class UnitsSaveLoader : SaveLoader<UnitManager, List<UnitData>>
     {
-        public UnitsSaveLoader(UnitManager service, IGameRepository gameRepository) : base(service, gameRepository)
+        private readonly Dictionary<string, Unit> _unitDict;
+
+        public UnitsSaveLoader(UnitManager service, IGameRepository gameRepository, PrefabProvider prefabProvider) : base(service, gameRepository)
         {
+            _unitDict = prefabProvider.UnitDict;
         }
 
         protected override List<UnitData> ConvertToData(UnitManager service)
@@ -17,18 +21,36 @@ namespace Assets.Scripts
 
         protected override void SetupData(UnitManager service, List<UnitData> data)
         {
-            //тут не очень понятно что с загрузкой, нет поля для идентефикации, а класс юнита менять нельзя
-            //видимо надо переспавнить всех юнитов обратно ?
-            //по хэшу префаба не получается
+            
+            //унчтожает старые юниты
+            var existUnits = service.GetAllUnits();
 
-            var result = data.Join(service.GetAllUnits(),
-                x => x.HashId,
-                y => y.GetHashCode(),
-                (x, y) => 
-                { 
-                    y.HitPoints = x.HitPoints;
-                    return y;
-                }).ToList();
+            do
+            {
+                var existUnit = existUnits.First();
+                service.DestroyUnit(existUnit);
+            }
+            while (existUnits.Any());
+
+           
+
+            //пересоздаются из сейвы
+            foreach (var saveUnit in data)
+            {
+                string type = saveUnit.Type;
+
+                if (!_unitDict.TryGetValue(type, out Unit prefab))
+                {
+                    Debug.Log("invalid save data");
+                    continue;
+                }
+
+                Vector3 position = saveUnit.Position;
+                Vector3 ratation = saveUnit.Rotation;
+                Quaternion quaternion = Quaternion.Euler(ratation.x, ratation.y, ratation.z);
+                Unit spawnunit = service.SpawnUnit(prefab, position, quaternion);
+                spawnunit.HitPoints = saveUnit.HitPoints;
+            }
         }
     }
 }

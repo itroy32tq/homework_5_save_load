@@ -99,7 +99,8 @@ namespace Assets.Scripts
                 len = fin.Read(bin, 0, 100);
                 decStream.Write(bin, 0, len);
                 rdlen = rdlen + len;
-                Console.WriteLine("{0} bytes processed", rdlen);
+
+                Debug.Log($"{rdlen} bytes processed");
             }
 
             string result = _unicodeEncoding.GetString(fout.ToArray());

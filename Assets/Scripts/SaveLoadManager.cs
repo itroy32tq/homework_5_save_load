@@ -15,19 +15,26 @@ namespace Assets.Scripts
         private Unit[] _units;
         private Resource[] _resources;
 
+        [SerializeField] private Transform _container;
+
         private void Start()
         {
             //для первого запуска
             _units = FindObjectsOfType<Unit>();
             _resources = FindObjectsOfType<Resource>();
+
+            _resourceService.SetResources(_resources);
+            _unitManager.SetupUnits(_units);
         }
 
         [Inject]
         public void Construct(IGameRepository gameRepository, List<ISaveLoader> saveLoaders, ResourceService resourceService, UnitManager unitManager)
         { 
-            _gameRepository = gameRepository; _saveLoaders = saveLoaders;
+            _gameRepository = gameRepository; 
+            _saveLoaders = saveLoaders;
             _resourceService = resourceService;
-            _unitManager = unitManager; 
+            _unitManager = unitManager;
+            _unitManager.SetContainer(_container);
         }
 
         [Button]
@@ -49,13 +56,6 @@ namespace Assets.Scripts
         public void LoadStateFromFile()
         {
             _gameRepository.LoadGameState();
-        }
-
-        [Button]
-        public void SetapData()
-        {
-            _resourceService.SetResources(_resources);
-            _unitManager.SetupUnits(_units);
         }
 
         [Button]

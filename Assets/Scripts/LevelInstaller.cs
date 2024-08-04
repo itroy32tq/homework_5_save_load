@@ -1,11 +1,13 @@
 ﻿using GameEngine;
+using UnityEngine;
 using Zenject;
 
 namespace Assets.Scripts
 {
     public sealed class LevelInstaller : MonoInstaller
     {
-      
+        [SerializeField] private PrefabProvider _prefabProvider;
+
         public override void InstallBindings()
         {
             Container.
@@ -33,6 +35,12 @@ namespace Assets.Scripts
             Container.
                 Bind<ISaveLoader>().
                 To<UnitsSaveLoader>().
+                AsSingle().
+                NonLazy();
+
+            Container.
+                Bind<PrefabProvider>().
+                FromInstance(_prefabProvider).
                 AsSingle().
                 NonLazy();
         }
