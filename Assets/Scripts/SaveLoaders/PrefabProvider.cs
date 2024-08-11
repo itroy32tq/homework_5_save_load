@@ -5,10 +5,15 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public class PrefabProvider : MonoBehaviour
+    [CreateAssetMenu(
+        fileName = "UnitPrefabConfig",
+        menuName = "Config/New UnitPrefabConfig"
+    )]
+    public class PrefabProvider : ScriptableObject
     {
         [field: SerializeField] public UnitDict UnitDict { get; set; }
     }
+
 
     [Serializable]
     public class UnitDict : UnitySerializedDictionary<string, Unit> { }
